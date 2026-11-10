@@ -6,35 +6,51 @@ public class SaludJugador : MonoBehaviour
 {
     [Header("Configuracion de Vidas")]
     public int vidasMaximas = 3;
-    private int vidasActuales;
+
+    // Cambiamos a propiedad pública para que la Chicha de Jora pueda consultar cuántas vidas tienes
+    public int VidasActuales { get; private set; }
 
     [Header("UI de Corazones")]
     public Image[] imagenesCorazones; // Arrastra aquí tus imágenes de corazones desde la UI
 
     private void Start()
     {
-        vidasActuales = vidasMaximas;
+        VidasActuales = vidasMaximas;
         ActualizarCorazones();
     }
 
     public void RecibirDano(int cantidad)
     {
-        vidasActuales -= cantidad;
-        if (vidasActuales < 0) vidasActuales = 0;
+        VidasActuales -= cantidad;
+        if (VidasActuales < 0) VidasActuales = 0;
 
         ActualizarCorazones();
 
-        if (vidasActuales <= 0)
+        if (VidasActuales <= 0)
         {
             MorirYReiniciar();
         }
+    }
+
+    // --- FUNCIÓN NUEVA: Curar / Ganar vida (llamada por la Chicha de Jora) ---
+    public void GanarVida(int cantidad)
+    {
+        VidasActuales += cantidad;
+
+        if (VidasActuales > vidasMaximas)
+        {
+            VidasActuales = vidasMaximas; // Evita que tengas más corazones del límite máximo
+        }
+
+        ActualizarCorazones(); // Refresca las imágenes de los corazones en la UI
+        Debug.Log("¡Vida recuperada con la Chicha de Jora! Vidas actuales: " + VidasActuales);
     }
 
     private void ActualizarCorazones()
     {
         for (int i = 0; i < imagenesCorazones.Length; i++)
         {
-            if (i < vidasActuales)
+            if (i < VidasActuales)
             {
                 imagenesCorazones[i].enabled = MuestraCorazon(true); // Muestra el corazón
             }
